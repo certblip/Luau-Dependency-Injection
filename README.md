@@ -1,80 +1,133 @@
-# DependencyInjection
+# Luau DI
 
-A lightweight dependency injection container for Roblox.
+A lightweight dependency injection container for Roblox that automatically resolves service dependencies, detects circular references, and manages service lifecycles.
 
-Automatically resolves service dependencies, detects circular references, and manages service lifetimes.
+Built for large-scale Roblox projects following the Dependency Inversion Principle (DIP) and SOLID architecture.
 
 ## Features
 
-- Constructor Injection
-- Singleton Services
-- Circular Dependency Detection
-- Automatic Service Resolution
-- Dependency Graph
-- Lifecycle Management
-- Framework Agnostic
-- Typed Luau Support
-
----
-
-## Example
-
-```lua
-local Inventory = resolve("InventoryService")
-```
-
-No manual require statements.
-
-The container resolves everything automatically.
-
----
+- Automatic dependency resolution
+- Constructor injection
+- Singleton services
+- Circular dependency detection
+- Dependency graph validation
+- Service lifecycle management
+- Lazy initialization
+- Zero runtime dependencies
+- Framework agnostic
+- Typed Luau support
 
 ## Installation
 
-Clone the repository
+### Wally
 
-```bash
-git clone https://github.com/USERNAME/DependencyInjection.git
+```toml
+[dependencies]
+LuauDI = "certblip/luau-di@1.0.0"
 ```
 
-or install using Wally.
+### Rojo
 
----
+Clone the repository.
+
+```bash
+git clone https://github.com/certblip/luau-di.git
+```
+
+Add the project to your `default.project.json`.
+
+```json
+{
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "Packages": {
+                "LuauDI": {
+                    "$path": "luau-di/src"
+                }
+            }
+        }
+    }
+}
+```
+
+Or, if you use Wally:
+
+```bash
+wally install
+rojo serve
+```
+
+## Basic Example
+
+```lua
+local DI = require(ReplicatedStorage.Packages.LuauDI)
+
+local InventoryService = DI:Get("InventoryService")
+
+InventoryService:AddItem(player, "Sword")
+```
+
+## Registering Services
+
+```lua
+DI:Register("DatabaseService", DatabaseService)
+DI:Register("InventoryService", InventoryService)
+DI:Register("EconomyService", EconomyService)
+```
+
+## Constructor Injection
+
+```lua
+return {
+    Name = "InventoryService",
+
+    Create = function(resolve)
+
+        local Database = resolve("DatabaseService")
+
+        local self = {}
+
+        return self
+    end
+}
+```
+
+No manual `require()` calls are needed between services.
 
 ## Project Structure
 
-```
+```text
 src/
+├── Core/
+│   ├── DIContainer.lua
+│   ├── DependencyGraph.lua
+│   ├── Lifecycle.lua
+│   ├── Resolver.lua
+│   └── ServiceLoader.lua
+│
+├── Interfaces/
+├── Types/
+└── init.lua
+
 demo/
+
 docs/
+
 test/
 ```
 
----
-
-## Example Services
-
-```
-DatabaseService
-InventoryService
-EconomyService
-PlayerService
-```
-
----
-
 ## Roadmap
 
-- Scoped Services
-- Transient Services
-- Interface Injection
-- Attribute Auto Registration
-- Async Initialization
-- Service Profiling
-- Hot Reloading
-
----
+- Scoped services
+- Transient services
+- Interface injection
+- Attribute auto registration
+- Async initialization
+- Service profiling
+- Hot reloading
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
