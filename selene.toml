@@ -1,0 +1,13 @@
+std = "roblox"
+
+exclude = [
+    "Packages",
+    "build"
+]
+
+[lints]
+shadowing = "allow"
+multiple_statements = "allow"
+mixed_table = "allow"
+unused_variable = "warn"
+undefined_variable = "deny"
