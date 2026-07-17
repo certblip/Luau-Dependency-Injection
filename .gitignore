@@ -1,0 +1,29 @@
+# Wally
+Packages/
+Package.lock
+
+# Rojo Build
+build/
+*.rbxl
+*.rbxlx
+*.rbxm
+
+# Aftman
+.aftman/
+
+# Studio
+*.log
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Lua
+*.luac
+
+# Misc
+*.tmp
+*.bak
