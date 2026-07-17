@@ -1,0 +1,12 @@
+{
+    "name": "LuauDI",
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "LuauDI": {
+                "$path": "src"
+            }
+        }
+    }
+}
