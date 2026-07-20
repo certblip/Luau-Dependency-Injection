@@ -1,37 +1,28 @@
-local DI = require(script.Parent.Parent.src)
+local LuauDI = require(script.Parent.Parent.src)
 
-local Lifetime = require(script.Parent.Parent.src.Types.Lifetime)
+local DI = LuauDI.new()
 
 DI:Register({
-
 	Name = "Database",
-
-	Lifetime = Lifetime.Singleton,
-
+	Lifetime = "Singleton",
 	Constructor = function()
-
-		return {}
-
-	end
-
+		return { connected = true }
+	end,
 })
 
 DI:Register({
-
 	Name = "Inventory",
-
-	Lifetime = Lifetime.Singleton,
-
+	Lifetime = "Singleton",
+	Dependencies = { "Database" },
 	Constructor = function(resolve)
-
 		local Database = resolve("Database")
-
-		assert(Database)
-
+		assert(Database, "Inventory should receive its Database dependency.")
+		assert(Database.connected, "Database should be usable when injected.")
 		return {}
-
-	end
-
+	end,
 })
 
-DI:Get("Inventory")
+local inventory = DI:Get("Inventory")
+assert(inventory, "Inventory should resolve.")
+
+print("[Resolver.spec] passed")

@@ -2,13 +2,29 @@
 
 ## Registering
 
+A service definition is a table. You can register it inline or from a module.
+
 ```lua
+DI:Register({
+    Name = "DatabaseService",
+    Lifetime = "Singleton",
+    Dependencies = {},
+    Constructor = function(resolve)
+        return {}
+    end,
+})
+```
+
+Or register a definition returned by a module:
+
+```lua
+local DatabaseService = require(script.DatabaseService)
 DI:Register(DatabaseService)
 ```
 
 ---
 
-## Loading
+## Loading a folder (recursive)
 
 ```lua
 DI:Load(script.Services)
@@ -24,28 +40,38 @@ local Inventory = DI:Get("InventoryService")
 
 ---
 
-## Constructor Injection
+## Constructor injection
 
 ```lua
 Constructor = function(resolve)
-
     local Database = resolve("DatabaseService")
-
+    -- ...
 end
 ```
 
 ---
 
-## Singleton
+## Lifetimes
+
+Use the string directly, or the exported `Lifetime` table:
 
 ```lua
-Lifetime.Singleton
+Lifetime = "Singleton"
+Lifetime = "Transient"
+
+-- or
+local LuauDI = require(ReplicatedStorage.Packages.LuauDI)
+Lifetime = LuauDI.Lifetime.Singleton
 ```
 
 ---
 
-## Transient
+## Isolated container (tests)
 
 ```lua
-Lifetime.Transient
+local LuauDI = require(ReplicatedStorage.Packages.LuauDI)
+
+local container = LuauDI.new()
+container:Register({ ... })
+container:Initialize()
 ```

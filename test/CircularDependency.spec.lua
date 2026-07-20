@@ -1,43 +1,61 @@
-local DI = require(script.Parent.Parent.src)
+local LuauDI = require(script.Parent.Parent.src)
 
-local Lifetime = require(script.Parent.Parent.src.Types.Lifetime)
+-- 1. Runtime detection (dependencies discovered while constructing).
+do
+	local DI = LuauDI.new()
 
-DI:Register({
+	DI:Register({
+		Name = "A",
+		Lifetime = "Singleton",
+		Constructor = function(resolve)
+			resolve("B")
+			return {}
+		end,
+	})
 
-	Name = "A",
+	DI:Register({
+		Name = "B",
+		Lifetime = "Singleton",
+		Constructor = function(resolve)
+			resolve("A")
+			return {}
+		end,
+	})
 
-	Lifetime = Lifetime.Singleton,
+	local success = pcall(function()
+		DI:Get("A")
+	end)
 
-	Constructor = function(resolve)
+	assert(not success, "Expected runtime circular dependency detection.")
+end
 
-		resolve("B")
+-- 2. Static detection (declared dependencies, before construction).
+do
+	local DI = LuauDI.new()
 
-		return {}
+	DI:Register({
+		Name = "X",
+		Lifetime = "Singleton",
+		Dependencies = { "Y" },
+		Constructor = function()
+			return {}
+		end,
+	})
 
-	end
+	DI:Register({
+		Name = "Y",
+		Lifetime = "Singleton",
+		Dependencies = { "X" },
+		Constructor = function()
+			return {}
+		end,
+	})
 
-})
+	local success = pcall(function()
+		DI:Validate()
+	end)
 
-DI:Register({
+	assert(not success, "Expected static circular dependency detection via Validate().")
+end
 
-	Name = "B",
-
-	Lifetime = Lifetime.Singleton,
-
-	Constructor = function(resolve)
-
-		resolve("A")
-
-		return {}
-
-	end
-
-})
-
-local success = pcall(function()
-
-	DI:Get("A")
-
-end)
-
-assert(not success, "Expected circular dependency detection.")
+print("[CircularDependency.spec] passed")
